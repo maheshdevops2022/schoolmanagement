@@ -1,0 +1,353 @@
+/* =========================
+   GLOBAL
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #f4f6f9;
+    font-family: Arial, sans-serif;
+}
+
+/* =========================
+   PAGE
+========================= */
+
+.main-content {
+    padding: 25px;
+    min-height: 100vh;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 28px;
+    color: #1e293b;
+}
+
+/* =========================
+   ADD BUTTON
+========================= */
+
+.add-btn {
+    background: #2563eb;
+    color: white;
+
+    border: none;
+    border-radius: 5px;
+
+    padding: 10px 18px;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.add-btn:hover {
+    background: #1d4ed8;
+}
+
+/* =========================
+   FORM CARD
+========================= */
+
+.form-card {
+    background: white;
+
+    padding: 20px;
+    margin-bottom: 25px;
+
+    border-radius: 6px;
+
+    border: 1px solid #dbe2ea;
+}
+
+/* =========================
+   FORM HEADER
+========================= */
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 18px;
+}
+
+.form-header h3 {
+    font-size: 20px;
+    color: #0f172a;
+}
+
+/* =========================
+   CLOSE BUTTON
+========================= */
+
+.close-btn {
+    width: 32px;
+    height: 32px;
+
+    border: none;
+    border-radius: 4px;
+
+    background: #ef4444;
+    color: white;
+
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    background: #dc2626;
+}
+
+/* =========================
+   FORM GRID
+========================= */
+
+.student-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+/* =========================
+   INPUT GROUP
+========================= */
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================
+   LABEL
+========================= */
+
+.input-group label {
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #1e293b;
+
+    margin-bottom: 6px;
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+.student-form input {
+    padding: 10px 12px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+
+    background: #fff;
+
+    font-size: 14px;
+    color: #334155;
+
+    outline: none;
+    transition: 0.2s;
+}
+
+.student-form input:focus {
+    border-color: #2563eb;
+
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* =========================
+   SUBMIT BUTTON
+========================= */
+
+.submit-btn {
+    grid-column: span 2;
+
+    padding: 12px;
+
+    border: none;
+    border-radius: 5px;
+
+    background: #16a34a;
+    color: white;
+
+    font-size: 15px;
+    font-weight: bold;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.submit-btn:hover {
+    background: #15803d;
+}
+
+/* =========================
+   TABLE CARD
+========================= */
+
+.table-card {
+    background: white;
+
+    padding: 20px;
+
+    border-radius: 6px;
+
+    border: 1px solid #dbe2ea;
+}
+
+.table-card h3 {
+    margin-bottom: 15px;
+
+    color: #0f172a;
+    font-size: 20px;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* =========================
+   TABLE HEADER
+========================= */
+
+thead {
+    background: #2563eb;
+}
+
+th {
+    padding: 12px;
+
+    color: white;
+
+    border: 1px solid #dbe2ea;
+
+    font-size: 14px;
+    text-align: center;
+}
+
+/* =========================
+   TABLE BODY
+========================= */
+
+td {
+    padding: 12px;
+
+    border: 1px solid #dbe2ea;
+
+    text-align: center;
+
+    font-size: 14px;
+    color: #334155;
+}
+
+tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+tbody tr:hover {
+    background: #eaf2ff;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.edit-btn {
+    background: #facc15;
+    color: black;
+
+    border: none;
+    border-radius: 4px;
+
+    padding: 6px 10px;
+
+    margin-right: 5px;
+
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.edit-btn:hover {
+    background: #eab308;
+}
+
+.delete-btn {
+    background: #ef4444;
+    color: white;
+
+    border: none;
+    border-radius: 4px;
+
+    padding: 6px 10px;
+
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+}
+
+/* =========================
+   EMPTY DATA
+========================= */
+
+.no-data {
+    text-align: center;
+    padding: 18px;
+    color: #64748b;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+
+    .main-content {
+        padding: 15px;
+    }
+
+    .student-form {
+        grid-template-columns: 1fr;
+    }
+
+    .submit-btn {
+        grid-column: span 1;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    th,
+    td {
+        font-size: 12px;
+        padding: 8px;
+    }
+}

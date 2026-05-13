@@ -1,0 +1,344 @@
+/* =========================
+   GLOBAL
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #f1f5f9;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* =========================
+   PAGE
+========================= */
+
+.main-content {
+    padding: 25px;
+    min-height: 100vh;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    font-size: 30px;
+    color: #0f172a;
+    font-weight: 700;
+}
+
+/* =========================
+   ADD BUTTON
+========================= */
+
+.add-btn {
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    padding: 11px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.add-btn:hover {
+    background: #1d4ed8;
+}
+
+/* =========================
+   FORM CARD
+========================= */
+
+.form-card {
+    background: white;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 8px;
+    border: 1px solid #dbe2ea;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================
+   FORM HEADER
+========================= */
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.form-header h3 {
+    color: #0f172a;
+    font-size: 22px;
+}
+
+/* =========================
+   CLOSE BUTTON
+========================= */
+
+.close-btn {
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 6px;
+    background: #ef4444;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.close-btn:hover {
+    background: #dc2626;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.teacher-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+/* =========================
+   FORM GROUP
+========================= */
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================
+   LABEL
+========================= */
+
+.form-group label {
+    margin-bottom: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+}
+
+/* =========================
+   INPUT
+========================= */
+
+.form-group input {
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s;
+    background: #fff;
+}
+
+.form-group input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* =========================
+   SUBMIT BUTTON
+========================= */
+
+.submit-btn {
+    grid-column: span 2;
+    padding: 13px;
+    background: #16a34a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.submit-btn:hover {
+    background: #15803d;
+}
+
+/* =========================
+   TABLE CONTAINER
+========================= */
+
+.table-container,
+.table-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #dbe2ea;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================
+   TABLE TITLE
+========================= */
+
+.table-title,
+.table-card h3 {
+    margin-bottom: 18px;
+    font-size: 22px;
+    color: #0f172a;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.teacher-table,
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* =========================
+   TABLE HEADER
+========================= */
+
+.teacher-table thead,
+table thead {
+    background: #2563eb;
+}
+
+.teacher-table th,
+table th {
+    padding: 13px;
+    color: white;
+    border: 1px solid #dbe2ea;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* =========================
+   TABLE BODY
+========================= */
+
+.teacher-table td,
+table td {
+    padding: 13px;
+    border: 1px solid #dbe2ea;
+    text-align: center;
+    font-size: 14px;
+    color: #334155;
+}
+
+.teacher-table tbody tr:nth-child(even),
+table tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.teacher-table tbody tr:hover,
+table tbody tr:hover {
+    background: #eff6ff;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.edit-btn {
+    background: #f59e0b;
+    color: white;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.edit-btn:hover {
+    background: #d97706;
+}
+
+.delete-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+}
+
+/* =========================
+   NO DATA
+========================= */
+
+.no-data {
+    text-align: center;
+    padding: 18px;
+    color: #64748b;
+    font-size: 15px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+
+    .main-content {
+        padding: 15px;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .teacher-form {
+        grid-template-columns: 1fr;
+    }
+
+    .submit-btn {
+        grid-column: span 1;
+    }
+
+    .teacher-table,
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .teacher-table th,
+    .teacher-table td,
+    table th,
+    table td {
+        font-size: 12px;
+        padding: 9px;
+    }
+}

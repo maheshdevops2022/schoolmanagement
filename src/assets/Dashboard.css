@@ -1,0 +1,47 @@
+/* Main content (adjust for sidebar) */
+.main-content {
+    margin-left: 260px;
+    padding: 30px;
+    background: #f5f7fb;
+    min-height: 100vh;
+}
+
+/* Title */
+.title {
+    margin-bottom: 25px;
+    color: #333;
+}
+
+/* Cards container */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+/* Individual card */
+.card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: 0.3s;
+}
+
+/* Hover effect */
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Card text */
+.card h3 {
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2a5298;
+}
