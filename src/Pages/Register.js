@@ -1,28 +1,56 @@
 import React, { useState } from "react";
 import "../assets/Register.css";
 import { Link } from "react-router-dom";
+import axios from "axios";
+
 const Register = () => {
   const [form, setForm] = useState({
+    name: "",
     email: "",
-    username: "",
-    mobilenumber: "",
+    phone: "",
     password: "",
-    confirmpassword: ""
+    confirmpassword: "",
   });
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Password validation
     if (form.password !== form.confirmpassword) {
-      alert("Password Does Not Match");
+      alert("Passwords do not match");
       return;
     }
-    alert("Form Submitted");
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        form
+      );
+
+      console.log(response.data);
+
+      alert("Registration Successful");
+
+      setForm({
+        name: "",
+        email: "",
+        phone: "",
+        password: "",
+        confirmpassword: "",
+      });
+    } catch (error) {
+      console.log(error);
+      alert("Registration Failed");
+    }
   };
+
   return (
     <div className="container">
       <div className="login-container">
@@ -30,6 +58,17 @@ const Register = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="form-container">
+
+            <div>
+              <label>Name</label>
+              <input
+                type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+              />
+            </div>
+
             <div>
               <label>Email</label>
               <input
@@ -41,21 +80,11 @@ const Register = () => {
             </div>
 
             <div>
-              <label>Username</label>
-              <input
-                type="text"
-                name="username"
-                value={form.username}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div>
               <label>Mobile Number</label>
               <input
                 type="tel"
-                name="mobilenumber"
-                value={form.mobilenumber}
+                name="phone"
+                value={form.phone}
                 onChange={handleChange}
                 maxLength="10"
               />
@@ -82,8 +111,12 @@ const Register = () => {
             </div>
 
             <button type="submit">Register</button>
-            <p>If You Have an Account.Please <Link to="/login">Login here </Link>
+
+            <p>
+              If You Have an Account, Please{" "}
+              <Link to="/">Login here</Link>
             </p>
+
           </div>
         </form>
       </div>
