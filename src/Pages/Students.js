@@ -1,5 +1,6 @@
-import React, { useState} from "react";
+import React, { useEffect, useState } from "react";
 import "../assets/Students.css";
+import axios from "axios";
 
 const Students = () => {
   const [students, setStudents] = useState([]);
@@ -13,15 +14,31 @@ const Students = () => {
     class: "",
     mobile: "",
     village: "",
-    gender:"",
+    gender: "",
   });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const addStudents = (e) => {
+  //get students
+  const fetchStudents = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/user/getStudents");
+      setStudents(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  const addStudents =  async (e) => {
     e.preventDefault();
+    try {
 
     if (
       !form.name ||
@@ -37,21 +54,17 @@ const Students = () => {
     }
 
     if (editId) {
-      // UPDATE
-      const updated = students.map((student) =>
-        student.id === editId ? { ...form, id: editId } : student,
-      );
-      setStudents(updated);
-      setEditId(null);
+      await axios.put(`http://localhost:5000/api/user/updateStudents/${editId}`, form)
     } else {
-      // ADD
-      const newStudent = {
-        id: Date.now(),
-        ...form,
-      };
-      setStudents([...students, newStudent]);
+      // edit ayindhi add avudhi
+
+      await axios.post("http://localhost:5000/api/user/addStudents", form)
+
     }
 
+    //tableUpdate avudhi
+
+    fetchStudents();
     setForm({
       name: "",
       surname: "",
@@ -60,16 +73,27 @@ const Students = () => {
       mobile: "",
       village: "",
       gender: "",
-    });
 
+    });
+    setEditId(null);
     setShowForm(false);
+  } catch (error) {
+    console.log(error);
+  }
+
   };
 
-  const deleteStudents = (id) => {
+  const deleteStudents =  async (id) => {
     const confirmDelete = window.confirm("Are you sure?");
     if (!confirmDelete) return;
 
-    setStudents(students.filter((student) => student.id !== id));
+    try {
+      await axios.delete(`http://localhost:5000/api/user/deleteStudents/${id}`);
+      fetchStudents();
+    } catch (error) {
+      console.log(error);
+    }
+
   };
 
   const editStudents = (student) => {
@@ -129,12 +153,7 @@ const Students = () => {
 
             <div className="input-group">
               <label>Class</label>
-              <input
-                name="class"
-                placeholder="Class"
-                value={form.class}
-                onChange={handleChange}
-              />
+              <input name="class" placeholder="Class" value={form.class} onChange={handleChange} />
             </div>
 
             <div className="input-group">
@@ -158,7 +177,7 @@ const Students = () => {
               />
             </div>
 
-             <div className="input-group">
+            <div className="input-group">
               <label>Gender</label>
               <input
                 name="gender"
@@ -167,7 +186,6 @@ const Students = () => {
                 onChange={handleChange}
               />
             </div>
-
 
             <button type="submit" className="submit-btn">
               {editId ? "Update Student" : "Save Student"}
@@ -189,7 +207,7 @@ const Students = () => {
               <th>Gender</th>
               <th>Mobile</th>
               <th>Village</th>
-              
+
               <th>Actions</th>
             </tr>
           </thead>
@@ -206,16 +224,10 @@ const Students = () => {
                   <td>{student.mobile}</td>
                   <td>{student.village}</td>
                   <td>
-                    <button
-                      className="edit-btn"
-                      onClick={() => editStudents(student)}
-                    >
+                    <button className="edit-btn" onClick={() => editStudents(student)}>
                       ✏️ Edit
                     </button>
-                    <button
-                      className="delete-btn"
-                      onClick={() => deleteStudents(student.id)}
-                    >
+                    <button className="delete-btn" onClick={() => deleteStudents(student.id)}>
                       ❌ Delete
                     </button>
                   </td>

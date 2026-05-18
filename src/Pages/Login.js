@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Login = () => {
-
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -25,8 +24,15 @@ const Login = () => {
     try {
       const response = await axios.post("http://localhost:5000/api/auth/login", form);
       console.log(response.data);
+
+      localStorage.setItem("role", response.data.role);
       alert("Login SuccessFull");
-      navigate("/dashboard");
+
+      if (response.data.role === "admin") {
+        navigate("/dashboard");
+      } else {
+        navigate("/classes");
+      }
     } catch (error) {
       console.log(error);
       alert(error.response?.data.message || "Login Failed");

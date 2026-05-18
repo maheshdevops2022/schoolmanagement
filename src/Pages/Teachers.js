@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../assets/Teachers.css";
+import axios from "axios";
 
 const Teachers = () => {
   const [teachers, setTeachers] = useState([]);
@@ -10,12 +11,31 @@ const Teachers = () => {
     name: "",
     surname: "",
     mobile: "",
-    gender:"",
+    gender: "",
     subject: "",
     date: "",
     experience: "",
     salary: "",
   });
+
+  //get teachers data
+
+  const fetchTeachers = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/user/getTeachers");
+
+      console.log("API DATA:", response.data);
+
+      setTeachers(response.data.data || response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //
+
+  useEffect(() => {
+    fetchTeachers();
+  }, []);
 
   // HANDLE INPUT
   const handleChange = (e) => {
@@ -26,61 +46,60 @@ const Teachers = () => {
   };
 
   // ADD / UPDATE TEACHER
-  const addTeachers = (e) => {
+  const addTeachers = async (e) => {
     e.preventDefault();
 
-    if (
-      !form.name ||
-      !form.surname ||
-      !form.gender ||
-      !form.mobile ||
-      !form.subject ||
-      !form.date ||
-      !form.experience ||
-      !form.salary
-    ) {
-      alert("Please fill all fields");
-      return;
-    }
+    try {
+      if (
+        !form.name ||
+        !form.surname ||
+        !form.gender ||
+        !form.mobile ||
+        !form.subject ||
+        !form.date ||
+        !form.experience ||
+        !form.salary
+      ) {
+        alert("Please fill all fields");
+        return;
+      }
 
-    if (editId) {
-      // UPDATE
-      const updatedTeachers = teachers.map((teacher) =>
-        teacher.id === editId ? { ...form, id: editId } : teacher
-      );
+      if (editId) {
+        await axios.put(`http://localhost:5000/api/user/updateTeachers/${editId}`, form);
+      } else {
+        await axios.post("http://localhost:5000/api/user/addTeachers", form);
+      }
 
-      setTeachers(updatedTeachers);
+      fetchTeachers();
+
+      setForm({
+        name: "",
+        surname: "",
+        gender: "",
+        mobile: "",
+        subject: "",
+        date: "",
+        experience: "",
+        salary: "",
+      });
+
       setEditId(null);
-    } else {
-      // ADD
-      const newTeacher = {
-        id: Date.now(),
-        ...form,
-      };
-
-      setTeachers([...teachers, newTeacher]);
+      setShowForm(false);
+    } catch (error) {
+      console.log(error);
     }
-
-    // RESET FORM
-    setForm({
-      name: "",
-      surname: "",
-      gender:"",
-      mobile: "",
-      subject: "",
-      date: "",
-      experience: "",
-      salary: "",
-    });
-
-    setShowForm(false);
   };
 
   // DELETE
-  const deleteTeachers = (id) => {
+  const deleteTeachers = async (id) => {
     const confirmDelete = window.confirm("Are You Sure?");
     if (!confirmDelete) return;
-    setTeachers(teachers.filter((teacher) => teacher.id !== id));
+    try {
+      await axios.delete(`http://localhost:5000/api/user/deleteTeachers/${id}`);
+      fetchTeachers();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // EDIT
@@ -107,7 +126,7 @@ const Teachers = () => {
             setForm({
               name: "",
               surname: "",
-              gender:"",
+              gender: "",
               mobile: "",
               subject: "",
               date: "",
@@ -164,7 +183,6 @@ const Teachers = () => {
                 placeholder="Enter Gender"
               />
             </div>
-
 
             <div className="form-group">
               <label>Mobile Number</label>

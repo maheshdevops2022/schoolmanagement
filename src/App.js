@@ -7,6 +7,7 @@ import Dashboard from "./Pages/Dashboard";
 import Students from "./Pages/Students";
 import Teachers from "./Pages/Teachers";
 import Classes from "./Pages/Classes";
+import ProtectedRoute from "./Pages/ProtectedRoute";
 
 function App() {
   const location = useLocation();
@@ -25,10 +26,38 @@ function App() {
       <Sidebar />
 
       <Routes>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/students" element={<Students />} />
-        <Route path="/teachers" element={<Teachers />} />
-        <Route path="/classes" element={<Classes />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/students"
+          element={
+            <ProtectedRoute>
+              <Students />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teachers"
+          element={
+            <ProtectedRoute>
+              <Teachers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/classes"
+          element={
+            <ProtectedRoute>
+              <Classes />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );
