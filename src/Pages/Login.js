@@ -23,6 +23,8 @@ const Login = () => {
 
     try {
       const response = await axios.post("http://localhost:5000/api/auth/login", form);
+
+      localStorage.setItem("token", response.data.token);
       console.log(response.data);
 
       localStorage.setItem("role", response.data.role);
@@ -30,6 +32,8 @@ const Login = () => {
 
       if (response.data.role === "admin") {
         navigate("/dashboard");
+      } else if (response.data.role === "teacher") {
+        navigate("/teachers");
       } else {
         navigate("/classes");
       }

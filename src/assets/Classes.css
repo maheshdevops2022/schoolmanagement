@@ -146,3 +146,42 @@ tr:hover {
     width: 90%;
   }
 }
+
+
+
+.edit-btn {
+    background: #facc15;
+    color: black;
+
+    border: none;
+    border-radius: 4px;
+
+    padding: 6px 10px;
+
+    margin-right: 5px;
+
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.edit-btn:hover {
+    background: #eab308;
+}
+
+.delete-btn {
+    background: #ef4444;
+    color: white;
+
+    border: none;
+    border-radius: 4px;
+
+    padding: 6px 10px;
+
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+}
+

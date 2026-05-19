@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../assets/Classes.css";
+import axios from "axios";
 
 const Classes = () => {
   const [form, setForm] = useState({
@@ -11,71 +12,113 @@ const Classes = () => {
 
   const [classes, setClasses] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [editId, setEditId] = useState(null);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const addClass = (e) => {
+  // GET CLASSES
+
+  const fetchClasses = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/user/getClasses");
+
+      setClasses(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchClasses();
+  }, []);
+
+  // ADD / UPDATE CLASS
+
+  const addClass = async (e) => {
     e.preventDefault();
 
-    if (!form.className || !form.teacher || !form.boys || !form.girls) {
-      alert("Please fill all fields");
-      return;
+    try {
+      if (!form.className || !form.teacher || !form.boys || !form.girls) {
+        alert("Please fill all fields");
+        return;
+      }
+
+      if (editId) {
+        await axios.put(`http://localhost:5000/api/user/editClasses/${editId}`, form);
+        alert("class updated");
+      } else {
+        await axios.post("http://localhost:5000/api/user/addClasses", form);
+        alert("class Added");
+      }
+
+      fetchClasses();
+
+      setForm({
+        className: "",
+        teacher: "",
+        boys: "",
+        girls: "",
+      });
+
+      setEditId(null);
+      setShowForm(false);
+    } catch (error) {
+      console.log(error);
+      alert(error.respose?.data?.message || "class already exists");
     }
+  };
 
-    const totalStudents =
-      Number(form.boys) + Number(form.girls);
+  // EDIT
 
-    const newClass = {
-      id: Date.now(),
-      ...form,
-      totalStudents,
-    };
+  const editClasses = (item) => {
+    const { id, ...rest } = item;
 
-    setClasses([newClass, ...classes]);
+    setForm(rest);
+    setEditId(id);
+    setShowForm(true);
+  };
 
-    setForm({
-      className: "",
-      teacher: "",
-      boys: "",
-      girls: "",
-    });
+  // DELETE
 
-    setShowForm(false);
+  const deleteClasses = async (id) => {
+    const confirmDelete = window.confirm("Are You Sure ?");
+
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`http://localhost:5000/api/user/deleteClasses/${id}`);
+
+      fetchClasses();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <div className="classes-page">
-
-      {/* TOP BAR */}
       <div className="classes-topbar">
         <h2>🏫 Classes Dashboard</h2>
 
-        <button
-          className="classes-add-btn"
-          onClick={() => setShowForm(true)}
-        >
+        <button className="classes-add-btn" onClick={() => setShowForm(true)}>
           + Add Class
         </button>
       </div>
 
-      {/* FORM MODAL */}
       {showForm && (
         <div className="classes-modal-overlay">
           <div className="classes-modal">
-
-            <button
-              className="classes-close"
-              onClick={() => setShowForm(false)}
-            >
+            <button className="classes-close" onClick={() => setShowForm(false)}>
               ✕
             </button>
 
-            <h3>Add New Class</h3>
+            <h3>{editId ? "Update Class" : "Add New Class"}</h3>
 
             <form onSubmit={addClass} className="classes-form">
-
               <input
                 name="className"
                 placeholder="Class Name"
@@ -108,16 +151,12 @@ const Classes = () => {
                 />
               </div>
 
-              <button className="classes-save-btn">
-                Save Class
-              </button>
-
+              <button className="classes-save-btn">{editId ? "Update Class" : "Save Class"}</button>
             </form>
           </div>
         </div>
       )}
 
-      {/* TABLE */}
       <div className="classes-table-card">
         <table>
           <thead>
@@ -127,6 +166,8 @@ const Classes = () => {
               <th>Boys</th>
               <th>Girls</th>
               <th>Total</th>
+              <th>Edit</th>
+              <th>Delete</th>
             </tr>
           </thead>
 
@@ -134,20 +175,31 @@ const Classes = () => {
             {classes.length > 0 ? (
               classes.map((item) => (
                 <tr key={item.id}>
-                  <td>{item.className}</td>
+                  <td>{item.class_name}</td>
                   <td>{item.teacher}</td>
                   <td>{item.boys}</td>
                   <td>{item.girls}</td>
+
                   <td>
-                    <span className="badge">
-                      {item.totalStudents}
-                    </span>
+                    <span className="badge">{Number(item.boys) + Number(item.girls)}</span>
+                  </td>
+
+                  <td>
+                    <button className="edit-btn" onClick={() => editClasses(item)}>
+                      Edit
+                    </button>
+                  </td>
+
+                  <td>
+                    <button className="delete-btn" onClick={() => deleteClasses(item.id)}>
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="no-data">
+                <td colSpan="7" className="no-data">
                   No Classes Added Yet
                 </td>
               </tr>
@@ -155,7 +207,6 @@ const Classes = () => {
           </tbody>
         </table>
       </div>
-
     </div>
   );
 };

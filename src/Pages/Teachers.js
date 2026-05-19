@@ -8,10 +8,13 @@ const Teachers = () => {
   const [editId, setEditId] = useState(null);
 
   const [form, setForm] = useState({
+    email:"",
+    password:"",
     name: "",
     surname: "",
-    mobile: "",
     gender: "",
+    mobile: "",
+
     subject: "",
     date: "",
     experience: "",
@@ -51,6 +54,8 @@ const Teachers = () => {
 
     try {
       if (
+        !form.email ||
+        !form.password ||
         !form.name ||
         !form.surname ||
         !form.gender ||
@@ -73,6 +78,8 @@ const Teachers = () => {
       fetchTeachers();
 
       setForm({
+        email: "",
+        password: "",
         name: "",
         surname: "",
         gender: "",
@@ -91,11 +98,11 @@ const Teachers = () => {
   };
 
   // DELETE
-  const deleteTeachers = async (id) => {
+  const deleteTeachers = async (user_id) => {
     const confirmDelete = window.confirm("Are You Sure?");
     if (!confirmDelete) return;
     try {
-      await axios.delete(`http://localhost:5000/api/user/deleteTeachers/${id}`);
+      await axios.delete(`http://localhost:5000/api/user/deleteTeachers/${user_id}`);
       fetchTeachers();
     } catch (error) {
       console.log(error);
@@ -104,10 +111,10 @@ const Teachers = () => {
 
   // EDIT
   const editTeachers = (teacher) => {
-    const { id, ...rest } = teacher;
+    const { user_id, ...rest } = teacher;
 
     setForm(rest);
-    setEditId(id);
+    setEditId(user_id);
     setShowForm(true);
   };
 
@@ -124,6 +131,8 @@ const Teachers = () => {
             setEditId(null);
 
             setForm({
+              email: "",
+              password: "",
               name: "",
               surname: "",
               gender: "",
@@ -151,6 +160,21 @@ const Teachers = () => {
           </div>
 
           <form className="teacher-form" onSubmit={addTeachers}>
+            <div className="form-group">
+              <label>Email</label>
+
+              <input type="email" name="email" value={form.email} onChange={handleChange} />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+
+              <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+              />
+            </div>
             <div className="form-group">
               <label>Teacher Name</label>
               <input
@@ -247,6 +271,7 @@ const Teachers = () => {
         <table className="teacher-table">
           <thead>
             <tr>
+              <th>Email</th>
               <th>Name</th>
               <th>Surname</th>
               <th>Gender</th>
@@ -262,7 +287,8 @@ const Teachers = () => {
           <tbody>
             {teachers.length > 0 ? (
               teachers.map((teacher) => (
-                <tr key={teacher.id}>
+                <tr key={teacher.user_id}>
+                  <td>{teacher.email}</td>
                   <td>{teacher.name}</td>
                   <td>{teacher.surname}</td>
                   <td>{teacher.gender}</td>
@@ -277,7 +303,7 @@ const Teachers = () => {
                       ✏️ Edit
                     </button>
 
-                    <button className="delete-btn" onClick={() => deleteTeachers(teacher.id)}>
+                    <button className="delete-btn" onClick={() => deleteTeachers(teacher.user_id)}>
                       ❌ Delete
                     </button>
                   </td>
