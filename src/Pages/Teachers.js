@@ -98,11 +98,11 @@ const Teachers = () => {
   };
 
   // DELETE
-  const deleteTeachers = async (user_id) => {
+  const deleteTeachers = async (id) => {
     const confirmDelete = window.confirm("Are You Sure?");
     if (!confirmDelete) return;
     try {
-      await axios.delete(`http://localhost:5000/api/user/deleteTeachers/${user_id}`);
+      await axios.delete(`http://localhost:5000/api/user/deleteTeachers/${id}`);
       fetchTeachers();
     } catch (error) {
       console.log(error);
@@ -111,10 +111,10 @@ const Teachers = () => {
 
   // EDIT
   const editTeachers = (teacher) => {
-    const { user_id, ...rest } = teacher;
+    const { id, ...rest } = teacher;
 
     setForm(rest);
-    setEditId(user_id);
+    setEditId(id);
     setShowForm(true);
   };
 
@@ -287,7 +287,7 @@ const Teachers = () => {
           <tbody>
             {teachers.length > 0 ? (
               teachers.map((teacher) => (
-                <tr key={teacher.user_id}>
+                <tr key={teacher.id}>
                   <td>{teacher.email}</td>
                   <td>{teacher.name}</td>
                   <td>{teacher.surname}</td>
@@ -303,7 +303,7 @@ const Teachers = () => {
                       ✏️ Edit
                     </button>
 
-                    <button className="delete-btn" onClick={() => deleteTeachers(teacher.user_id)}>
+                    <button className="delete-btn" onClick={() => deleteTeachers(teacher.id)}>
                       ❌ Delete
                     </button>
                   </td>
