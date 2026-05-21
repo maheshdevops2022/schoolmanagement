@@ -3,13 +3,15 @@ import "../assets/Teachers.css";
 import axios from "axios";
 
 const Teachers = () => {
+  const role = localStorage.getItem("role");
   const [teachers, setTeachers] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
 
   const [form, setForm] = useState({
-    email:"",
-    password:"",
+    userId: "",
+    email: "",
+    password: "",
     name: "",
     surname: "",
     gender: "",
@@ -25,7 +27,12 @@ const Teachers = () => {
 
   const fetchTeachers = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/user/getTeachers");
+      const token = localStorage.getItem("token");
+      const response = await axios.get("http://localhost:5000/api/user/getTeachers", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       console.log("API DATA:", response.data);
 
@@ -53,7 +60,10 @@ const Teachers = () => {
     e.preventDefault();
 
     try {
+      const token = localStorage.getItem("token");
+
       if (
+        !form.userId ||
         !form.email ||
         !form.password ||
         !form.name ||
@@ -70,14 +80,24 @@ const Teachers = () => {
       }
 
       if (editId) {
-        await axios.put(`http://localhost:5000/api/user/updateTeachers/${editId}`, form);
+        await axios.put(`http://localhost:5000/api/user/updateTeachers/${editId}`, form, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       } else {
-        await axios.post("http://localhost:5000/api/user/addTeachers", form);
+        
+        await axios.post("http://localhost:5000/api/user/addTeachers", form, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       }
 
       fetchTeachers();
 
       setForm({
+        userId: "",
         email: "",
         password: "",
         name: "",
@@ -102,7 +122,12 @@ const Teachers = () => {
     const confirmDelete = window.confirm("Are You Sure?");
     if (!confirmDelete) return;
     try {
-      await axios.delete(`http://localhost:5000/api/user/deleteTeachers/${id}`);
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:5000/api/user/deleteTeachers/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       fetchTeachers();
     } catch (error) {
       console.log(error);
@@ -123,29 +148,31 @@ const Teachers = () => {
       {/* HEADER */}
       <div className="header">
         <h1>👨‍🏫 Teachers</h1>
+        {role === "admin" && (
+          <button
+            className="add-btn"
+            onClick={() => {
+              setShowForm(true);
+              setEditId(null);
 
-        <button
-          className="add-btn"
-          onClick={() => {
-            setShowForm(true);
-            setEditId(null);
-
-            setForm({
-              email: "",
-              password: "",
-              name: "",
-              surname: "",
-              gender: "",
-              mobile: "",
-              subject: "",
-              date: "",
-              experience: "",
-              salary: "",
-            });
-          }}
-        >
-          + Add Teacher
-        </button>
+              setForm({
+                userId: "",
+                email: "",
+                password: "",
+                name: "",
+                surname: "",
+                gender: "",
+                mobile: "",
+                subject: "",
+                date: "",
+                experience: "",
+                salary: "",
+              });
+            }}
+          >
+            + Add Teacher
+          </button>
+        )}
       </div>
 
       {/* FORM */}
@@ -160,6 +187,16 @@ const Teachers = () => {
           </div>
 
           <form className="teacher-form" onSubmit={addTeachers}>
+            <div className="form-group">
+              <label>userId</label>
+              <input
+                type="text"
+                name="userId"
+                value={form.userId}
+                onChange={handleChange}
+                placeholder="userId"
+              />
+            </div>
             <div className="form-group">
               <label>Email</label>
 
@@ -271,6 +308,7 @@ const Teachers = () => {
         <table className="teacher-table">
           <thead>
             <tr>
+              <tr>userId</tr>
               <th>Email</th>
               <th>Name</th>
               <th>Surname</th>
@@ -288,6 +326,7 @@ const Teachers = () => {
             {teachers.length > 0 ? (
               teachers.map((teacher) => (
                 <tr key={teacher.id}>
+                  <td>{teacher.userId}</td>
                   <td>{teacher.email}</td>
                   <td>{teacher.name}</td>
                   <td>{teacher.surname}</td>
