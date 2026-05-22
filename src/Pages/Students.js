@@ -3,15 +3,19 @@ import "../assets/Students.css";
 import axios from "axios";
 
 const Students = () => {
+  const role = localStorage.getItem("role");
+
   const [students, setStudents] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
 
   const [form, setForm] = useState({
+    email: "",
+    password: "",
     name: "",
     surname: "",
     fathersname: "",
-    class: "",
+    studentsClass: "",
     mobile: "",
     village: "",
     gender: "",
@@ -21,97 +25,169 @@ const Students = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  //get students
+  // ================= GET STUDENTS =================
   const fetchStudents = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/user/getStudents");
-      setStudents(response.data);
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get("http://localhost:5000/api/user/getStudents", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setStudents(response.data.data);
     } catch (error) {
-      console.log(error);
+      console.log(error.response?.data || error.message);
     }
   };
 
-  //
   useEffect(() => {
     fetchStudents();
   }, []);
 
-  const addStudents =  async (e) => {
+  // ================= ADD / UPDATE =================
+  const addStudents = async (e) => {
     e.preventDefault();
+
     try {
+      const token = localStorage.getItem("token");
 
-    if (
-      !form.name ||
-      !form.surname ||
-      !form.fathersname ||
-      !form.class ||
-      !form.mobile ||
-      !form.village ||
-      !form.gender
-    ) {
-      alert("Please fill all fields");
-      return;
+      if (
+        !form.email ||
+        !form.password ||
+        !form.name ||
+        !form.surname ||
+        !form.fathersname ||
+        !form.studentsClass ||
+        !form.mobile ||
+        !form.village ||
+        !form.gender
+      ) {
+        alert("Please fill all fields");
+        return;
+      }
+
+      if (editId) {
+        // UPDATE
+        await axios.put(`http://localhost:5000/api/user/updateStudents/${editId}`, form, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } else {
+        // ADD
+        await axios.post(
+          "http://localhost:5000/api/user/addStudents",
+          {
+            email: form.email,
+            password: form.password,
+            name: form.name,
+            surname: form.surname,
+            fathersname: form.fathersname,
+            studentsClass: form.studentsClass,
+            mobile: form.mobile,
+            village: form.village,
+            gender: form.gender,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
+
+      fetchStudents();
+
+      setForm({
+        email: "",
+        password: "",
+        name: "",
+        surname: "",
+        fathersname: "",
+        studentsClass: "",
+        mobile: "",
+        village: "",
+        gender: "",
+      });
+
+      setEditId(null);
+      setShowForm(false);
+    } catch (error) {
+      console.log(error.response?.data || error.message);
     }
-
-    if (editId) {
-      await axios.put(`http://localhost:5000/api/user/updateStudents/${editId}`, form)
-    } else {
-      // edit ayindhi add avudhi
-
-      await axios.post("http://localhost:5000/api/user/addStudents", form)
-
-    }
-
-    //tableUpdate avudhi
-
-    fetchStudents();
-    setForm({
-      name: "",
-      surname: "",
-      fathersname: "",
-      class: "",
-      mobile: "",
-      village: "",
-      gender: "",
-
-    });
-    setEditId(null);
-    setShowForm(false);
-  } catch (error) {
-    console.log(error);
-  }
-
   };
 
-  const deleteStudents =  async (id) => {
+  // ================= DELETE =================
+  const deleteStudents = async (id) => {
     const confirmDelete = window.confirm("Are you sure?");
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/user/deleteStudents/${id}`);
+      const token = localStorage.getItem("token");
+
+      await axios.delete(`http://localhost:5000/api/user/deleteStudents/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       fetchStudents();
     } catch (error) {
-      console.log(error);
+      console.log(error.response?.data || error.message);
     }
-
   };
 
+  // ================= EDIT =================
   const editStudents = (student) => {
-    const { id, ...rest } = student; // ✅ remove id
-    setForm(rest);
-    setEditId(id);
+    setForm({
+      email: student.email || "",
+      password: "",
+      name: student.name || "",
+      surname: student.surname || "",
+      fathersname: student.fathersname || "",
+      studentsClass: student.studentsClass || "",
+      mobile: student.mobile || "",
+      village: student.village || "",
+      gender: student.gender || "",
+    });
+
+    setEditId(student.id);
     setShowForm(true);
   };
 
   return (
     <div className="main-content">
+      {/* HEADER */}
       <div className="header">
         <h1>🎓 Students</h1>
-        <button className="add-btn" onClick={() => setShowForm(true)}>
-          + Add Student
-        </button>
+
+        {(role === "admin" || role === "teacher") && (
+          <button
+            className="add-btn"
+            onClick={() => {
+              setShowForm(true);
+              setEditId(null);
+              setForm({
+                email: "",
+                password: "",
+                name: "",
+                surname: "",
+                fathersname: "",
+                studentsClass: "",
+                mobile: "",
+                village: "",
+                gender: "",
+              });
+            }}
+          >
+            + Add Student
+          </button>
+        )}
       </div>
 
+      {/* FORM */}
       {showForm && (
         <div className="form-card">
           <div className="form-header">
@@ -120,95 +196,67 @@ const Students = () => {
               ✖
             </button>
           </div>
+
           <form className="student-form" onSubmit={addStudents}>
-            <div className="input-group">
-              <label>Student Name</label>
-              <input
-                name="name"
-                placeholder="First Name"
-                value={form.name}
-                onChange={handleChange}
-              />
-            </div>
+            <input name="email" placeholder="Email" value={form.email} onChange={handleChange} />
+            <input
+              name="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+            />
+            <input name="name" placeholder="Name" value={form.name} onChange={handleChange} />
+            <input
+              name="surname"
+              placeholder="Surname"
+              value={form.surname}
+              onChange={handleChange}
+            />
+            <input
+              name="fathersname"
+              placeholder="Father Name"
+              value={form.fathersname}
+              onChange={handleChange}
+            />
 
-            <div className="input-group">
-              <label>Surname</label>
-              <input
-                name="surname"
-                placeholder="Surname"
-                value={form.surname}
-                onChange={handleChange}
-              />
-            </div>
+            <input
+              name="studentsClass"
+              placeholder="Class"
+              value={form.studentsClass}
+              onChange={handleChange}
+            />
 
-            <div className="input-group">
-              <label>Father Name</label>
-              <input
-                name="fathersname"
-                placeholder="Father Name"
-                value={form.fathersname}
-                onChange={handleChange}
-              />
-            </div>
+            <input name="mobile" placeholder="Mobile" value={form.mobile} onChange={handleChange} />
+            <input
+              name="village"
+              placeholder="Village"
+              value={form.village}
+              onChange={handleChange}
+            />
+            <input name="gender" placeholder="Gender" value={form.gender} onChange={handleChange} />
 
-            <div className="input-group">
-              <label>Class</label>
-              <input name="class" placeholder="Class" value={form.class} onChange={handleChange} />
-            </div>
-
-            <div className="input-group">
-              <label>Mobile Number</label>
-              <input
-                name="mobile"
-                type="text"
-                placeholder="Mobile Number"
-                value={form.mobile}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="input-group">
-              <label>Village</label>
-              <input
-                name="village"
-                placeholder="Village"
-                value={form.village}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="input-group">
-              <label>Gender</label>
-              <input
-                name="gender"
-                placeholder="Gender"
-                value={form.gender}
-                onChange={handleChange}
-              />
-            </div>
-
-            <button type="submit" className="submit-btn">
-              {editId ? "Update Student" : "Save Student"}
-            </button>
+            <button type="submit">{editId ? "Update Student" : "Save Student"}</button>
           </form>
         </div>
       )}
 
+      {/* TABLE */}
       <div className="table-card">
         <h3>📋 Students List</h3>
 
         <table>
           <thead>
             <tr>
+              <th>UserId</th>
+              <th>Email</th>
               <th>Name</th>
               <th>Surname</th>
               <th>Father</th>
-              <th>Class</th>
+              <th>Student Class</th>
               <th>Gender</th>
               <th>Mobile</th>
               <th>Village</th>
-
-              <th>Actions</th>
+              {(role === "admin" || role === "teacher") && <th>Actions</th>}
             </tr>
           </thead>
 
@@ -216,28 +264,29 @@ const Students = () => {
             {students.length > 0 ? (
               students.map((student) => (
                 <tr key={student.id}>
+                  <td>{student.userId}</td>
+                  <td>{student.email}</td>
                   <td>{student.name}</td>
                   <td>{student.surname}</td>
                   <td>{student.fathersname}</td>
-                  <td>{student.class}</td>
+                  <td>{student.studentsClass}</td>
                   <td>{student.gender}</td>
                   <td>{student.mobile}</td>
                   <td>{student.village}</td>
+
                   <td>
-                    <button className="edit-btn" onClick={() => editStudents(student)}>
-                      ✏️ Edit
-                    </button>
-                    <button className="delete-btn" onClick={() => deleteStudents(student.id)}>
-                      ❌ Delete
-                    </button>
+                    {(role === "admin" || role === "teacher") && (
+                      <>
+                        <button onClick={() => editStudents(student)}>✏️</button>
+                        <button onClick={() => deleteStudents(student.id)}>❌</button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="7" className="no-data">
-                  No students yet
-                </td>
+                <td colSpan="10">No students yet</td>
               </tr>
             )}
           </tbody>

@@ -24,18 +24,21 @@ const Login = () => {
     try {
       const response = await axios.post("http://localhost:5000/api/auth/login", form);
 
+      const role = response.data.role;
+
       localStorage.setItem("token", response.data.token);
-      console.log(response.data);
+      localStorage.setItem("role", role);
 
-      localStorage.setItem("role", response.data.role);
-      alert("Login SuccessFull");
+      alert("Login Successful");
 
-      if (response.data.role === "admin") {
+      if (role === "admin") {
         navigate("/dashboard");
-      } else if (response.data.role === "teacher") {
+      } else if (role === "teacher") {
         navigate("/teachers");
+      } else if (role === "student") {
+        navigate("/students");
       } else {
-        navigate("/classes");
+        navigate("/");
       }
     } catch (error) {
       console.log(error);

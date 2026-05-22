@@ -4,30 +4,30 @@ import axios from "axios";
 
 const Teachers = () => {
   const role = localStorage.getItem("role");
+
   const [teachers, setTeachers] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
 
   const [form, setForm] = useState({
-    userId: "",
     email: "",
     password: "",
     name: "",
     surname: "",
     gender: "",
     mobile: "",
-
     subject: "",
     date: "",
     experience: "",
     salary: "",
   });
 
-  //get teachers data
+  // FETCH TEACHERS
 
   const fetchTeachers = async () => {
     try {
       const token = localStorage.getItem("token");
+
       const response = await axios.get("http://localhost:5000/api/user/getTeachers", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -38,16 +38,16 @@ const Teachers = () => {
 
       setTeachers(response.data.data || response.data);
     } catch (error) {
-      console.log(error);
+      console.log(error.response?.data || error.message);
     }
   };
-  //
 
   useEffect(() => {
     fetchTeachers();
   }, []);
 
   // HANDLE INPUT
+
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -56,16 +56,18 @@ const Teachers = () => {
   };
 
   // ADD / UPDATE TEACHER
+
   const addTeachers = async (e) => {
     e.preventDefault();
 
     try {
       const token = localStorage.getItem("token");
 
+      // VALIDATION
+
       if (
-        !form.userId ||
         !form.email ||
-        !form.password ||
+        (!editId && !form.password) ||
         !form.name ||
         !form.surname ||
         !form.gender ||
@@ -79,25 +81,34 @@ const Teachers = () => {
         return;
       }
 
+      // UPDATE
+
       if (editId) {
         await axios.put(`http://localhost:5000/api/user/updateTeachers/${editId}`, form, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-      } else {
-        
+
+        alert("Teacher Updated");
+      }
+
+      // ADD
+      else {
         await axios.post("http://localhost:5000/api/user/addTeachers", form, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+
+        alert("Teacher Added");
       }
 
       fetchTeachers();
 
+      // RESET FORM
+
       setForm({
-        userId: "",
         email: "",
         password: "",
         name: "",
@@ -113,50 +124,67 @@ const Teachers = () => {
       setEditId(null);
       setShowForm(false);
     } catch (error) {
-      console.log(error);
+      console.log(error.response?.data || error.message);
+
+      alert(error.response?.data?.message || "Something went wrong");
     }
   };
 
   // DELETE
+
   const deleteTeachers = async (id) => {
     const confirmDelete = window.confirm("Are You Sure?");
+
     if (!confirmDelete) return;
+
     try {
       const token = localStorage.getItem("token");
+
       await axios.delete(`http://localhost:5000/api/user/deleteTeachers/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      alert("Teacher Deleted");
+
       fetchTeachers();
     } catch (error) {
-      console.log(error);
+      console.log(error.response?.data || error.message);
     }
   };
 
   // EDIT
+
   const editTeachers = (teacher) => {
     const { id, ...rest } = teacher;
 
-    setForm(rest);
+    setForm({
+      ...rest,
+      password: "",
+    });
+
     setEditId(id);
+
     setShowForm(true);
   };
 
   return (
     <div className="main-content">
       {/* HEADER */}
+
       <div className="header">
         <h1>👨‍🏫 Teachers</h1>
+
         {role === "admin" && (
           <button
             className="add-btn"
             onClick={() => {
               setShowForm(true);
+
               setEditId(null);
 
               setForm({
-                userId: "",
                 email: "",
                 password: "",
                 name: "",
@@ -176,6 +204,7 @@ const Teachers = () => {
       </div>
 
       {/* FORM */}
+
       {showForm && (
         <div className="form-card">
           <div className="form-header">
@@ -187,21 +216,22 @@ const Teachers = () => {
           </div>
 
           <form className="teacher-form" onSubmit={addTeachers}>
-            <div className="form-group">
-              <label>userId</label>
-              <input
-                type="text"
-                name="userId"
-                value={form.userId}
-                onChange={handleChange}
-                placeholder="userId"
-              />
-            </div>
+            {/* EMAIL */}
+
             <div className="form-group">
               <label>Email</label>
 
-              <input type="email" name="email" value={form.email} onChange={handleChange} />
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="Enter Email"
+              />
             </div>
+
+            {/* PASSWORD */}
+
             <div className="form-group">
               <label>Password</label>
 
@@ -210,10 +240,15 @@ const Teachers = () => {
                 name="password"
                 value={form.password}
                 onChange={handleChange}
+                placeholder="Enter Password"
               />
             </div>
+
+            {/* NAME */}
+
             <div className="form-group">
               <label>Teacher Name</label>
+
               <input
                 type="text"
                 name="name"
@@ -223,8 +258,11 @@ const Teachers = () => {
               />
             </div>
 
+            {/* SURNAME */}
+
             <div className="form-group">
               <label>Surname</label>
+
               <input
                 type="text"
                 name="surname"
@@ -234,8 +272,11 @@ const Teachers = () => {
               />
             </div>
 
+            {/* GENDER */}
+
             <div className="form-group">
               <label>Gender</label>
+
               <input
                 type="text"
                 name="gender"
@@ -245,8 +286,11 @@ const Teachers = () => {
               />
             </div>
 
+            {/* MOBILE */}
+
             <div className="form-group">
               <label>Mobile Number</label>
+
               <input
                 type="text"
                 name="mobile"
@@ -256,8 +300,11 @@ const Teachers = () => {
               />
             </div>
 
+            {/* SUBJECT */}
+
             <div className="form-group">
               <label>Subject</label>
+
               <input
                 type="text"
                 name="subject"
@@ -267,13 +314,19 @@ const Teachers = () => {
               />
             </div>
 
+            {/* DATE */}
+
             <div className="form-group">
               <label>Date Of Joining</label>
+
               <input type="date" name="date" value={form.date} onChange={handleChange} />
             </div>
 
+            {/* EXPERIENCE */}
+
             <div className="form-group">
               <label>Experience</label>
+
               <input
                 type="text"
                 name="experience"
@@ -283,8 +336,11 @@ const Teachers = () => {
               />
             </div>
 
+            {/* SALARY */}
+
             <div className="form-group">
               <label>Salary</label>
+
               <input
                 type="text"
                 name="salary"
@@ -302,13 +358,14 @@ const Teachers = () => {
       )}
 
       {/* TABLE */}
+
       <div className="table-card">
         <h3 className="table-title">📋 Teachers List</h3>
 
         <table className="teacher-table">
           <thead>
             <tr>
-              <tr>userId</tr>
+              <th>UserId</th>
               <th>Email</th>
               <th>Name</th>
               <th>Surname</th>
@@ -338,19 +395,23 @@ const Teachers = () => {
                   <td>{teacher.salary}</td>
 
                   <td>
-                    <button className="edit-btn" onClick={() => editTeachers(teacher)}>
-                      ✏️ Edit
-                    </button>
+                    {role === "admin" && (
+                      <>
+                        <button className="edit-btn" onClick={() => editTeachers(teacher)}>
+                          ✏️ Edit
+                        </button>
 
-                    <button className="delete-btn" onClick={() => deleteTeachers(teacher.id)}>
-                      ❌ Delete
-                    </button>
+                        <button className="delete-btn" onClick={() => deleteTeachers(teacher.id)}>
+                          ❌ Delete
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="8" className="no-data">
+                <td colSpan="11" className="no-data">
                   No teachers added
                 </td>
               </tr>

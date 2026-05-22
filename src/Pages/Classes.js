@@ -25,7 +25,13 @@ const Classes = () => {
 
   const fetchClasses = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/user/getClasses");
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get("http://localhost:5000/api/user/getClasses", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
 
       setClasses(response.data.data);
     } catch (error) {
