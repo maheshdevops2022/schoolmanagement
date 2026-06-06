@@ -9,6 +9,12 @@ const Students = () => {
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
 
+  const [file, setFile] = useState(null);
+  const [search, setSearch] = useState("");
+
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -25,18 +31,46 @@ const Students = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  ///uploads
+
+  const uploadStudents = async () => {
+    if (!file) {
+      alert("Please select a CSV file");
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/user/uploadStudents", formData);
+
+      console.log(response.data);
+
+      await fetchStudents();
+
+      alert("CSV Uploaded Successfully");
+    } catch (error) {
+      console.log(error);
+
+      alert("Upload Failed");
+    }
+  };
+
   // ================= GET STUDENTS =================
   const fetchStudents = async () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get("http://localhost:5000/api/user/getStudents", {
+      const response = await axios.get(`http://localhost:5000/api/user/getStudents?page=${page}&limit=10&search=${search}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       setStudents(response.data.data);
+      setTotalPages(response.data.totalPages);
     } catch (error) {
       console.log(error.response?.data || error.message);
     }
@@ -44,7 +78,7 @@ const Students = () => {
 
   useEffect(() => {
     fetchStudents();
-  }, []);
+  }, [page, search]);
 
   // ================= ADD / UPDATE =================
   const addStudents = async (e) => {
@@ -124,13 +158,15 @@ const Students = () => {
     const confirmDelete = window.confirm("Are you sure?");
     if (!confirmDelete) return;
 
+    
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`http://localhost:5000/api/user/deleteStudents/${id}`, {
+      await axios.delete(`http://localhost:5000/api/user/deleteStudents/{id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        
       });
 
       fetchStudents();
@@ -157,11 +193,30 @@ const Students = () => {
     setShowForm(true);
   };
 
+  const filteredStudents = students.filter(
+    (student) =>
+      student.name?.toLowerCase().includes(search.toLowerCase()) ||
+      student.email?.toLowerCase().includes(search.toLowerCase) ||
+      student.mobile?.includes(search)
+  );
+
+  //pagination
+
+  
   return (
     <div className="main-content">
       {/* HEADER */}
       <div className="header">
         <h1>🎓 Students</h1>
+        <input
+          type="text"
+          placeholder="name email surname"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1)
+          }}
+        />
 
         {(role === "admin" || role === "teacher") && (
           <button
@@ -196,6 +251,8 @@ const Students = () => {
               ✖
             </button>
           </div>
+          <input type="file" accept=".csv" onChange={(e) => setFile(e.target.files[0])} />
+          <button onClick={uploadStudents}>Upload Students CSV</button>
 
           <form className="student-form" onSubmit={addStudents}>
             <input name="email" placeholder="Email" value={form.email} onChange={handleChange} />
@@ -262,7 +319,7 @@ const Students = () => {
 
           <tbody>
             {students.length > 0 ? (
-              students.map((student) => (
+              filteredStudents.map((student) => (
                 <tr key={student.id}>
                   <td>{student.userId}</td>
                   <td>{student.email}</td>
@@ -291,6 +348,20 @@ const Students = () => {
             )}
           </tbody>
         </table>
+        <div className="pagination">
+          <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+            Previous
+          </button>
+
+          <span>Page {page}</span>
+
+          <button
+            disabled={page === totalPages}
+            onClick={() => setPage(page + 1)}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );

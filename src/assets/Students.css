@@ -1,353 +1,175 @@
-/* =========================
-   GLOBAL
-========================= */
+/* Page */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+.container {
+  padding: 30px;
+  background: #f4f7fc;
+  min-height: 100vh;
 }
 
-body {
-    background: #f4f6f9;
-    font-family: Arial, sans-serif;
+/* Heading */
+
+.container h1 {
+  color: #1e293b;
+  font-size: 32px;
+  font-weight: 700;
 }
 
-/* =========================
-   PAGE
-========================= */
+/* Add Button */
 
-.main-content {
-    padding: 25px;
-    min-height: 100vh;
+.container > button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 20px;
+  transition: 0.3s;
 }
 
-/* =========================
-   HEADER
-========================= */
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    margin-bottom: 20px;
+.container > button:hover {
+  background: #1d4ed8;
 }
 
-.header h1 {
-    font-size: 28px;
-    color: #1e293b;
+/* Modal */
+
+.container > div:first-of-type {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 550px;
+  max-width: 95%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
 }
 
-/* =========================
-   ADD BUTTON
-========================= */
+/* Close Button */
 
-.add-btn {
-    background: #2563eb;
-    color: white;
-
-    border: none;
-    border-radius: 5px;
-
-    padding: 10px 18px;
-
-    font-size: 14px;
-    font-weight: bold;
-
-    cursor: pointer;
-    transition: 0.3s;
+.container > div:first-of-type > button {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  background: crimson;
+  color: white;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-weight: bold;
 }
 
-.add-btn:hover {
-    background: #1d4ed8;
+/* Form */
+
+.mb-3 {
+  margin-bottom: 15px;
 }
 
-/* =========================
-   FORM CARD
-========================= */
-
-.form-card {
-    background: white;
-
-    padding: 20px;
-    margin-bottom: 25px;
-
-    border-radius: 6px;
-
-    border: 1px solid #dbe2ea;
+.mb-3 label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #334155;
 }
 
-/* =========================
-   FORM HEADER
-========================= */
-
-.form-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    margin-bottom: 18px;
+.form-control {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+  transition: 0.3s;
 }
 
-.form-header h3 {
-    font-size: 20px;
-    color: #0f172a;
+.form-control:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.2);
 }
 
-/* =========================
-   CLOSE BUTTON
-========================= */
-
-.close-btn {
-    width: 32px;
-    height: 32px;
-
-    border: none;
-    border-radius: 4px;
-
-    background: #ef4444;
-    color: white;
-
-    cursor: pointer;
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #16a34a;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.close-btn:hover {
-    background: #dc2626;
+.btn-primary:hover {
+  background: #15803d;
 }
 
-/* =========================
-   FORM GRID
-========================= */
+/* Table Card */
 
-.student-form {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+.table {
+  margin-top: 30px;
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
 }
 
-/* =========================
-   INPUT GROUP
-========================= */
-
-.input-group {
-    display: flex;
-    flex-direction: column;
+.table h3 {
+  margin-bottom: 20px;
+  color: #1e293b;
 }
 
-/* =========================
-   LABEL
-========================= */
+/* Table */
 
-.input-group label {
-    font-size: 14px;
-    font-weight: 600;
-
-    color: #1e293b;
-
-    margin-bottom: 6px;
+.table table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-/* =========================
-   INPUTS
-========================= */
-
-.student-form input {
-    padding: 10px 12px;
-
-    border: 1px solid #cbd5e1;
-    border-radius: 5px;
-
-    background: #fff;
-
-    font-size: 14px;
-    color: #334155;
-
-    outline: none;
-    transition: 0.2s;
+.table thead {
+  background: #2563eb;
+  color: white;
 }
 
-.student-form input:focus {
-    border-color: #2563eb;
-
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+.table th,
+.table td {
+  padding: 14px;
+  text-align: left;
 }
 
-/* =========================
-   SUBMIT BUTTON
-========================= */
-
-.submit-btn {
-    grid-column: span 2;
-
-    padding: 12px;
-
-    border: none;
-    border-radius: 5px;
-
-    background: #16a34a;
-    color: white;
-
-    font-size: 15px;
-    font-weight: bold;
-
-    cursor: pointer;
-    transition: 0.3s;
+.table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.submit-btn:hover {
-    background: #15803d;
+.table tbody tr:hover {
+  background: #f8fafc;
 }
 
-/* =========================
-   TABLE CARD
-========================= */
-
-.table-card {
-    background: white;
-
-    padding: 20px;
-
-    border-radius: 6px;
-
-    border: 1px solid #dbe2ea;
+.table tbody tr:last-child {
+  border-bottom: none;
 }
 
-.table-card h3 {
-    margin-bottom: 15px;
+/* Empty Data */
 
-    color: #0f172a;
-    font-size: 20px;
+.table tbody:empty::after {
+  content: "No HODs Available";
+  display: block;
+  text-align: center;
+  padding: 20px;
+  color: #64748b;
 }
 
-/* =========================
-   TABLE
-========================= */
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-/* =========================
-   TABLE HEADER
-========================= */
-
-thead {
-    background: #2563eb;
-}
-
-th {
-    padding: 12px;
-
-    color: white;
-
-    border: 1px solid #dbe2ea;
-
-    font-size: 14px;
-    text-align: center;
-}
-
-/* =========================
-   TABLE BODY
-========================= */
-
-td {
-    padding: 12px;
-
-    border: 1px solid #dbe2ea;
-
-    text-align: center;
-
-    font-size: 14px;
-    color: #334155;
-}
-
-tbody tr:nth-child(even) {
-    background: #f8fafc;
-}
-
-tbody tr:hover {
-    background: #eaf2ff;
-}
-
-/* =========================
-   BUTTONS
-========================= */
-
-.edit-btn {
-    background: #facc15;
-    color: black;
-
-    border: none;
-    border-radius: 4px;
-
-    padding: 6px 10px;
-
-    margin-right: 5px;
-
-    cursor: pointer;
-    font-size: 13px;
-}
-
-.edit-btn:hover {
-    background: #eab308;
-}
-
-.delete-btn {
-    background: #ef4444;
-    color: white;
-
-    border: none;
-    border-radius: 4px;
-
-    padding: 6px 10px;
-
-    cursor: pointer;
-    font-size: 13px;
-}
-
-.delete-btn:hover {
-    background: #dc2626;
-}
-
-/* =========================
-   EMPTY DATA
-========================= */
-
-.no-data {
-    text-align: center;
-    padding: 18px;
-    color: #64748b;
-}
-
-/* =========================
-   MOBILE
-========================= */
+/* Responsive */
 
 @media (max-width: 768px) {
+  .table {
+    overflow-x: auto;
+  }
 
-    .main-content {
-        padding: 15px;
-    }
-
-    .student-form {
-        grid-template-columns: 1fr;
-    }
-
-    .submit-btn {
-        grid-column: span 1;
-    }
-
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
-
-    th,
-    td {
-        font-size: 12px;
-        padding: 8px;
-    }
+  .table table {
+    min-width: 800px;
+  }
 }

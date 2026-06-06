@@ -8,6 +8,7 @@ import Students from "./Pages/Students";
 import Teachers from "./Pages/Teachers";
 import Classes from "./Pages/Classes";
 import ProtectedRoute from "./Pages/ProtectedRoute";
+import Hod from "./Pages/Hod";
 
 function App() {
   const location = useLocation();
@@ -35,14 +36,6 @@ function App() {
           }
         />
         <Route
-          path="/students"
-          element={
-            <ProtectedRoute role={["admin", "teacher", "student"]}>
-              <Students />
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="/teachers"
           element={
             <ProtectedRoute role={["admin", "teacher"]}>
@@ -51,10 +44,27 @@ function App() {
           }
         />
         <Route
+          path="/students"
+          element={
+            <ProtectedRoute role={["admin", "teacher", "student"]}>
+              <Students />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/classes"
           element={
             <ProtectedRoute role={["admin", "teacher"]}>
               <Classes />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hod"
+          element={
+            <ProtectedRoute role={["admin", "hod"]}>
+              <Hod />
             </ProtectedRoute>
           }
         />

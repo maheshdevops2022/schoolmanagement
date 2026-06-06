@@ -8,6 +8,11 @@ const Teachers = () => {
   const [teachers, setTeachers] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [file, setFile] = useState(null);
+  const [search, setSearch] = useState("");
+
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const [form, setForm] = useState({
     email: "",
@@ -28,15 +33,19 @@ const Teachers = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get("http://localhost:5000/api/user/getTeachers", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `http://localhost:5000/api/user/getTeachers?page=${page}&limit=10&search=${search}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       console.log("API DATA:", response.data);
 
       setTeachers(response.data.data || response.data);
+      setTotalPages(response.data.totalPages);
     } catch (error) {
       console.log(error.response?.data || error.message);
     }
@@ -44,7 +53,33 @@ const Teachers = () => {
 
   useEffect(() => {
     fetchTeachers();
-  }, []);
+  }, [page, search]);
+
+  //upload csv
+
+  const uploadTeachers = async () => {
+    if (!file) {
+      alert("Please Upload Csv");
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/user/uploadTeachers", formData);
+
+      console.log(response.data);
+
+      await fetchTeachers();
+
+      alert("csv file uploaded");
+    } catch (error) {
+      console.log(error);
+      alert("Failed to upload");
+    }
+  };
 
   // HANDLE INPUT
 
@@ -84,11 +119,13 @@ const Teachers = () => {
       // UPDATE
 
       if (editId) {
-        await axios.put(`http://localhost:5000/api/user/updateTeachers/${editId}`, form, {
+        await axios.put(`http://localhost:5000/api/user/editTeachers/${editId}`, form, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+
+        await fetchTeachers();
 
         alert("Teacher Updated");
       }
@@ -156,18 +193,40 @@ const Teachers = () => {
 
   // EDIT
 
+  // const editTeachers = (teacher) => {
+  //   const { id, ...rest } = teacher;
+
+  //   setForm({
+  //     ...rest,
+  //     password: "",
+  //   });
+
+  //   setEditId(id);
+
+  //   setShowForm(true);
+  // };
+
   const editTeachers = (teacher) => {
     const { id, ...rest } = teacher;
 
     setForm({
       ...rest,
+      date: teacher.date ? new Date(teacher.date).toISOString().split("T")[0] : "",
       password: "",
     });
 
     setEditId(id);
-
     setShowForm(true);
   };
+
+  //filterstudents
+
+  const filteredTeachers = teachers.filter(
+    (teacher) =>
+      teacher.name?.toLowerCase().includes(search.toLowerCase()) ||
+      teacher.email?.toLowerCase().includes(search.toLowerCase()) ||
+      teacher.mobile?.includes(search)
+  );
 
   return (
     <div className="main-content">
@@ -175,6 +234,15 @@ const Teachers = () => {
 
       <div className="header">
         <h1>👨‍🏫 Teachers</h1>
+        <input
+          type="text"
+          placeholder="search by name"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+        />
 
         {role === "admin" && (
           <button
@@ -214,6 +282,8 @@ const Teachers = () => {
               ✖
             </button>
           </div>
+          <input type="file" accept=".csv" onChange={(e) => setFile(e.target.files[0])} />
+          <button onClick={uploadTeachers}>Upload Teachers CSV</button>
 
           <form className="teacher-form" onSubmit={addTeachers}>
             {/* EMAIL */}
@@ -381,7 +451,7 @@ const Teachers = () => {
 
           <tbody>
             {teachers.length > 0 ? (
-              teachers.map((teacher) => (
+              filteredTeachers.map((teacher) => (
                 <tr key={teacher.id}>
                   <td>{teacher.userId}</td>
                   <td>{teacher.email}</td>
@@ -418,6 +488,15 @@ const Teachers = () => {
             )}
           </tbody>
         </table>
+        <div className="pagination">
+          <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+            Previous
+          </button>
+          <span>Pages {page}</span>
+          <button disabled={page === totalPages} onClick={() => setPage(page + 1)}>
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );
